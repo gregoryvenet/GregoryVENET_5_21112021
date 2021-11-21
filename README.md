@@ -10,7 +10,7 @@ Votre client est Kanap, une marque de canapés qui vend ses produits depuis sa b
 <p align="center">
  <img src="https://user.oc-static.com/upload/2021/09/29/16329291678171_image2.png" width="200px"/>
 </p>
-<p align="center">---</p>
+<p align="center">--------</p>
 <p align="center">Logo de Kanap</p>
 
  
