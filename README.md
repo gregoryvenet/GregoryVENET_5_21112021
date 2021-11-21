@@ -1,6 +1,6 @@
 # Projet 5 de la formation Dev web Openclassrooms
 
-Page en cours de construction
+Projet en cours de construction
 
 ## Scénario
 Vous êtes en poste dans une agence de développement web depuis quelques semaines maintenant. Après avoir réalisé avec succès l’intégration de quelques sites web (HTML/CSS), on vous confie une nouvelle mission.
