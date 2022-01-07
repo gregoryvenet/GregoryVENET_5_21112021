@@ -1,28 +1,26 @@
-//--------------Importation et affichage des articles sur l'index.html----------------//
-const importApi = document.getElementById("items");
-let articles;
-// Requete Get pour la recup des produits depuis l'API
-const fetchArticles = async() => {
-    articles = await fetch("http://localhost:3000/api/products")
+// Auto appel de fonction avec boucle
+(async function() {
+    const products = await getProducts()
+    for (product of products) {
+        productsDisplay(products)
+    }
+})()
+//  recup des produits avec l'API
+function getProducts() {
+    return fetch("http://localhost:3000/api/products") 
         .then(response => response.json())
-        .catch(error => console.log("Problème avec le fetch de l'API: " + error.message));
-};
-
-// Fonction affichage du retour de l'API
-const returnArticles = async() => {
-    await fetchArticles();
-    importApi.innerHTML = (
-        articles.map(article => (
-            `<a href='./product.html?id=${article._id}'>
-                <article>
-                    <img src='${article.imageUrl}' alt='${article.altTxt}'>
-                    <h3 class='productName'>${article.name}</h3>
-                    <p class='productDescription'>${article.description}</p>
-                </article>
-            </a>`
-        )).join("")
-    );
+        .then(products => products)
+        // .then(json => console.log(json))
+        .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
-
-// Appel fonction
-returnArticles();
+// Affichage des produits
+function productsDisplay(products) {
+    document.getElementById("items").innerHTML += `
+    <a href="./product.html?id=${product._id}">
+        <article>
+            <img src="${product.imageUrl}" alt="${product.altTxt}">
+            <h3 class="productName">${product.name}</h3>
+            <p class="productDescription">${product.description}</p>
+        </article>
+    </a>`
+}
