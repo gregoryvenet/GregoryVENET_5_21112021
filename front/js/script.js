@@ -5,15 +5,14 @@
         productsDisplay(products)
     }
 })()
-//  recup des produits avec l'API
+// recup des produits avec l'API
 function getProducts() {
     return fetch("http://localhost:3000/api/products") 
         .then(response => response.json())
         .then(products => products)
-        // .then(json => console.log(json))
         .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
-// Affichage des produits
+// Affichage des produits sur le DOM
 function productsDisplay(products) {
     document.getElementById("items").innerHTML += `
     <a href="./product.html?id=${product._id}">
