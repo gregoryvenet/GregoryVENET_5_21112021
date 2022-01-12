@@ -8,9 +8,8 @@
 // recup des produits avec l'API
 function getProducts() {
     return fetch("http://localhost:3000/api/products") 
-        .then(response => response.json())
-        .then(products => products)
-        .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
+        .then(res => res.json())
+        .catch(err => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
 // Affichage des produits sur le DOM
 function productsDisplay(products) {
@@ -22,4 +21,5 @@ function productsDisplay(products) {
             <p class="productDescription">${product.description}</p>
         </article>
     </a>`
+    
 }
