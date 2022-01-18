@@ -2,13 +2,11 @@
 (async function() {
     let productId = getProductId()
     let product = await getProduct(productId)
-    let colors = product.colors
-    productDisplay(product)
-    colorsDisplay(colors)
-    marketDisplay()
+    displayProduct(product)
+    market(product)
 })()
-//------------------------GESTION DU PRODUIT------------------------
-// Récup de l'ID du produit
+//------------------------GESTION DU PRODUIT SUR LE DOM------------------------
+// Récup de l'ID du produit du lien du navigateur
 function getProductId() {
     return new URL(location.href).searchParams.get("id")
 }
@@ -19,62 +17,61 @@ function getProduct(productId) {
         .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
 // Affichage des éléments sur le DOM
-function productDisplay(product) {
-    document.querySelector(".item__img").innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}"></img>`
+function displayProduct(product) {
+    document.querySelector(".item__img").innerHTML = `<img id="imgTxt" src="${product.imageUrl}" alt="${product.altTxt}"></img>`
     document.getElementById("title").textContent = product.name
     document.getElementById("price").textContent = product.price
     document.getElementById("description").textContent = product.description
-}
-// Affichage des différentes couleurs selon quantité dans l'API
-function colorsDisplay(colors) {
-    colors.forEach(color => {
-    document.getElementById("colors").innerHTML += `<option value="${color}">${color}</option>`
-    });
+    product.colors.forEach((color) =>{
+      document.getElementById("colors").innerHTML += `<option value="${color}">${color}</option>`
+    })
 }
 //------------------------GESTION AVANT PANIER------------------------
-
-function marketDisplay() {
-  // Ecoute du bouton et recup des éléments du DOM et id de l'url
-  document.getElementById("addToCart").addEventListener("click", (e) => {
-    let selColor = document.getElementById("colors").value;
-    let selQuantity = document.getElementById("quantity").value;
-    let selName = document.getElementById("title").textContent;
-    let SelPrice = document.getElementById("price").textContent;
-    let selId = getProductId();
-    //Récup valeurs formulaire
-    let elProduct = {
-      Id: selId,
-      name: selName,
-      color: selColor,
-      quantity: selQuantity,
-      price: SelPrice
+function market(product) {
+  // Ecoute du bouton et recup des éléments du DOM
+  document.getElementById("addToCart").addEventListener("click", () => {
+    let color = document.getElementById("colors").value;
+    let quantity = document.getElementById("quantity").value;
+    //Création de l'objet avant envoi au localStorage
+    let item = {
+      Id: product._id,
+      name: product.name,
+      altTxt: product.altTxt,
+      imgSrc: product.imageUrl,
+      color,
+      quantity,
     };
-    //Condition a remplir et envoi au localStorage
-    if (elProduct.quantity > 0 && elProduct.quantity <=100 && elProduct.color !== "") {
-      // Si ok si dessus alors gestion LocalStorage;
-      let prodInLocStorage = JSON.parse(localStorage.getItem("product"))
-      // Ajout produit si existant dans le localStorage ou non
-      if(prodInLocStorage) {
-        if(prodInLocStorage.id === elProduct._id && prodInLocStorage.color === elProduct.color) {
-          prodInLocStorage(elProduct.name)++
+    //Condition a remplir et ajout localStorage
+    if (quantity > 0 && quantity <=100 && color !== "") {
+      // Transforme json du LocalStorage en objet;
+      let locStorage = JSON.parse(localStorage.getItem("storage"))
+      // Ajout produit si localStorage existant ou non
+      if (locStorage !== null) {
+        let findElement = locStorage.find(element => element.Id === item.Id && element.color === item.color)
+        // si l'element est trouvé dans le localStorage ou  non
+        if (findElement != undefined) {
+          let elQuantity = parseInt(findElement.quantity)
+          let quantity = parseInt(item.quantity)
+          findElement.quantity = elQuantity + quantity
+          localStorage.setItem("storage", JSON.stringify(locStorage))
         } else {
-          prodInLocStorage.push(elProduct)
-          localStorage.setItem("product", JSON.stringify(prodInLocStorage))
-          popupValidate()
-      }
-      // Ajout produit si inexistant dans le localStorage
-      } else {
-        prodInLocStorage = []
-        prodInLocStorage.push(elProduct)
-        localStorage.setItem("product", JSON.stringify(prodInLocStorage))
+          locStorage.push(item)
+          localStorage.setItem("storage", JSON.stringify(locStorage))
+        }
+        // appel fonction popup de validation
         popupValidate()
+      } else {
+        locStorage = []
+        locStorage.push(item)
+        localStorage.setItem("storage", JSON.stringify(locStorage))
+        popupValidate();
       }
     } else {
       alert("Merci de choisir une quantité compris entre 1 et 100 ainsi qu'une couleur s'il vous plait!");
     }
-    // Popup validation ajout au panier
+    // Popup choix après ajout au panier
     function popupValidate() {
-      if (window.confirm(`${selQuantity} ${selName} ont été ajouté à votre panier.\nCliquez sur OK pour continuer vos achats ou ANNULER pour aller au panier`)) {
+      if (window.confirm(`${quantity} ${product.name} ont été ajouté à votre panier.\nCliquez sur OK pour continuer vos achats ou ANNULER pour aller au panier`)) {
         window.location.href = "index.html"
         } else {
         window.location.href = "cart.html"
