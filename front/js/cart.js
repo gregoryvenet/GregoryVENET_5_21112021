@@ -1,31 +1,38 @@
 // Auto appel des fonctions
-(async function () {
-    let products = await getProducts()
-    shopManage(products);
-    removeElement(storage)
+(async function() {
+    let product = await getProduct()
+    shopManage()
+    updateQuantity()
+    removeElement()
+    totalQuantity()
+    price(product)
+    totalPrice()
 })()
-
 // recup des produits avec l'API
-function getProducts() {
-    return fetch("http://localhost:3000/api/products") 
+function getProduct(product) {
+    return fetch("http://localhost:3000/api/products/") 
         .then(res => res.json())
-        .catch(err => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
+        .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
-// ------------------------Panier------------------------
 // Récup élements produits du localStorage
+function getStorage() {
+    return JSON.parse(localStorage.getItem("storage"))
+}
+// Envoi des élements au localStorage
+function saveStorage() {
+    localStorage.setItem("storage", JSON.stringify(getStorage()))
+}
 
-let storage = JSON.parse(localStorage.getItem("storage"))
 // Gestion panier
-function shopManage(products) {
-    if(storage == null) {
+function shopManage() {
+    // Action si panier vide ou plein
+    if(getStorage() == null) {
         document.querySelector("h1").innerText = "Votre panier est vide"
         document.querySelector(".cart__price").innerHTML = ""
     } else {
-        let productsDisplay = document.getElementById("cart__items")
-        let totalProduct = document.getElementById("totalQuantity")
-        let totalPrice = document.getElementById("totalPrice")
-        storage.forEach(element => {
-            productsDisplay.innerHTML += `<article class="cart__item" data-id="${element.Id}" data-color="${element.Color}">
+        let displayProduct = document.getElementById("cart__items")
+        getStorage().forEach(element => {
+            displayProduct.innerHTML += `<article class="cart__item" data-id="${element.Id}" data-color="${element.Color}">
                                             <div class="cart__item__img">
                                             <img src="${element.imgSrc}" alt="${element.altTxt}">
                                             </div>
@@ -33,7 +40,7 @@ function shopManage(products) {
                                             <div class="cart__item__content__description">
                                                 <h2>${element.name}</h2>
                                                 <p>${element.color}</p>
-                                                <p>${products.price} €</p>
+                                                <p id="priceProduct"> €</p>
                                             </div>
                                             <div class="cart__item__content__settings">
                                                 <div class="cart__item__content__settings__quantity">
@@ -46,7 +53,73 @@ function shopManage(products) {
                                             </div>
                                             </div>
                                         </article>`
-            console.log(products.quantity);
-        }); 
+        })
     }
 }
+// changement des quantités avec la maj du localStorage
+function updateQuantity() {
+    let itemQuantity = document.querySelectorAll(".itemQuantity");
+    itemQuantity.forEach((element, i) => {
+        itemQuantity[i].addEventListener("change" , () => {
+            let quantityModif = Number(getStorage()[i].quantity)
+            let itemQuantityValue = Number(itemQuantity[i].value)
+            if (quantityModif != itemQuantityValue) {
+                quantityModif = itemQuantityValue
+                saveStorage();
+                // console.log(typeof(quantityModif))
+                // console.log(typeof(itemQuantityValue))
+                console.log(quantityModif);
+                console.log(itemQuantityValue);
+                location.reload();
+            }
+        })
+    })
+}
+// Fonction suppression du produit dans le panier
+function removeElement() {
+    let deleteItem = document.querySelectorAll(".deleteItem")
+    deleteItem.forEach((btn, i) => {
+        btn.addEventListener("click", () => {
+        if (confirm("Êtes-vous sûr de vouloir supprimer ce(s) produit(s)?")) {
+                getStorage().splice(i, 1)
+                saveStorage()
+                // location.reload();
+            }
+        })
+    })
+}
+// Calcul et affichage des quantités
+function totalQuantity() {
+    let totalQuantity = document.getElementById('totalQuantity')
+    let quantityProduct = document.querySelectorAll('.itemQuantity')
+    let totalNumber = 0;
+    quantityProduct.forEach(quantity =>{
+    totalNumber += Number(quantity.value)
+    })
+    return totalQuantity.innerHTML = totalNumber
+}
+// Ajout Prix de l'API
+function price(product) {
+    let getPriceDom = document.querySelectorAll("#priceProduct")
+    getPriceDom.forEach((element, i) => {
+        product.find((item, j) => {
+            let getIdProduct = product[j]._id
+            let getIdStorage = getStorage()[i].Id
+            if (getIdStorage === getIdProduct) {
+                getPriceDom.innerText = product[j].price
+                console.log(getPriceDom)
+            }
+        })
+    });
+}
+// Calcul des prix
+function totalPrice() {
+    let totalPrice = document.getElementById("totalPrice")
+    let priceProduct = document.querySelectorAll(".priceProduct")
+    totalPriceProducts = 0;
+    priceProduct.forEach(price => {
+        total += Number(price.textContent)
+    })
+    return totalPrice.innerHTML = totalPriceProducts;
+}
+
