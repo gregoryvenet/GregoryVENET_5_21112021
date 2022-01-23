@@ -2,7 +2,7 @@
 (async function() {
     const products = await getProducts()
     products.forEach(product => {
-        displayProducts(product)
+        displayProduct(product)
     }
 )})()
 // recup des produits avec l'API
@@ -12,7 +12,7 @@ function getProducts() {
         .catch(err => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
 // Affichage des produits sur le DOM
-function displayProducts(product) {
+function displayProduct(product) {
     document.getElementById("items").innerHTML += `
     <a href="./product.html?id=${product._id}">
         <article>

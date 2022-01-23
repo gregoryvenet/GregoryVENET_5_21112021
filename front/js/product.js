@@ -3,7 +3,7 @@
     let productId = getProductId()
     let product = await getProduct(productId)
     displayProduct(product)
-    market(product)
+    addProductEvent(product)
 })()
 //------------------------GESTION DU PRODUIT SUR LE DOM------------------------
 // Récup de l'ID du produit du lien du navigateur
@@ -27,14 +27,14 @@ function displayProduct(product) {
     })
 }
 //------------------------GESTION AVANT PANIER------------------------
-function market(product) {
+function addProductEvent(product) {
   // Ecoute du bouton et recup des éléments du DOM
   document.getElementById("addToCart").addEventListener("click", () => {
     let color = document.getElementById("colors").value;
     let quantity = document.getElementById("quantity").value;
     //Création de l'objet avant envoi au localStorage
     let item = {
-      Id: product._id,
+      id: product._id,
       name: product.name,
       altTxt: product.altTxt,
       imgSrc: product.imageUrl,
@@ -44,26 +44,27 @@ function market(product) {
     //Condition a remplir et ajout localStorage
     if (quantity > 0 && quantity <=100 && color !== "") {
       // Transforme json du LocalStorage en objet;
-      let locStorage = JSON.parse(localStorage.getItem("storage"))
+      let locStorage = JSON.parse(localStorage.getItem("products"))
       // Ajout produit si localStorage existant ou non
       if (locStorage !== null) {
-        let findElement = locStorage.find(element => element.Id === item.Id && element.color === item.color)
+        let findElement = locStorage.find(element => element.id === item.id && element.color === item.color)
+        console.table(findElement);
         // si l'element est trouvé dans le localStorage ou  non
         if (findElement != undefined) {
           let elQuantity = parseInt(findElement.quantity)
           let quantity = parseInt(item.quantity)
           findElement.quantity = elQuantity + quantity
-          localStorage.setItem("storage", JSON.stringify(locStorage))
+          localStorage.setItem("products", JSON.stringify(locStorage))
         } else {
           locStorage.push(item)
-          localStorage.setItem("storage", JSON.stringify(locStorage))
+          localStorage.setItem("products", JSON.stringify(locStorage))
         }
         // appel fonction popup de validation
         popupValidate()
       } else {
         locStorage = []
         locStorage.push(item)
-        localStorage.setItem("storage", JSON.stringify(locStorage))
+        localStorage.setItem("products", JSON.stringify(locStorage))
         popupValidate();
       }
     } else {
