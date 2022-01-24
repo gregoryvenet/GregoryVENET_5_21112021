@@ -1,10 +1,15 @@
 // Auto appel de fonctions
 (async function() {
-    let productId = getProductId()
-    let product = await getProduct(productId)
+  const productId = getProductId()
+  const product = await getProduct(productId)
     displayProduct(product)
     addProductEvent(product)
+    addTitlePage(product)
 })()
+// Ajout nom du produit dans le titre de la page
+function addTitlePage(product) {
+  document.title = product.name
+}
 //------------------------GESTION DU PRODUIT SUR LE DOM------------------------
 // Récup de l'ID du produit du lien du navigateur
 function getProductId() {
@@ -30,10 +35,10 @@ function displayProduct(product) {
 function addProductEvent(product) {
   // Ecoute du bouton et recup des éléments du DOM
   document.getElementById("addToCart").addEventListener("click", () => {
-    let color = document.getElementById("colors").value;
-    let quantity = document.getElementById("quantity").value;
+    const color = document.getElementById("colors").value;
+    const quantity = document.getElementById("quantity").value;
     //Création de l'objet avant envoi au localStorage
-    let item = {
+    const item = {
       id: product._id,
       name: product.name,
       altTxt: product.altTxt,
@@ -44,27 +49,26 @@ function addProductEvent(product) {
     //Condition a remplir et ajout localStorage
     if (quantity > 0 && quantity <=100 && color !== "") {
       // Transforme json du LocalStorage en objet;
-      let locStorage = JSON.parse(localStorage.getItem("products"))
+      const storage = JSON.parse(localStorage.getItem("products"))
       // Ajout produit si localStorage existant ou non
-      if (locStorage !== null) {
-        let findElement = locStorage.find(element => element.id === item.id && element.color === item.color)
-        console.table(findElement);
+      if (storage !== null) {
+        const findElement = storage.find(element => element.id === item.id && element.color === item.color)
         // si l'element est trouvé dans le localStorage ou  non
         if (findElement != undefined) {
-          let elQuantity = parseInt(findElement.quantity)
-          let quantity = parseInt(item.quantity)
+          const elQuantity = parseInt(findElement.quantity)
+          const quantity = parseInt(item.quantity)
           findElement.quantity = elQuantity + quantity
-          localStorage.setItem("products", JSON.stringify(locStorage))
+          localStorage.setItem("products", JSON.stringify(storage))
         } else {
-          locStorage.push(item)
-          localStorage.setItem("products", JSON.stringify(locStorage))
+          storage.push(item)
+          localStorage.setItem("products", JSON.stringify(storage))
         }
         // appel fonction popup de validation
         popupValidate()
       } else {
-        locStorage = []
-        locStorage.push(item)
-        localStorage.setItem("products", JSON.stringify(locStorage))
+        storage = []
+        storage.push(item)
+        localStorage.setItem("products", JSON.stringify(storage))
         popupValidate();
       }
     } else {
