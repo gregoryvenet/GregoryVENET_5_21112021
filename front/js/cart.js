@@ -67,14 +67,15 @@ function price(product) {
 function updateQuantityEvent() {
     const inputQuantity = document.querySelectorAll(".itemQuantity");
     const storage = JSON.parse(localStorage.getItem("products"));
-        storage.forEach((product, i) => {
-        inputQuantity[i].addEventListener("change",() => {
-            const objIndex = storage.findIndex(item=> item.id === product.id && item.color === product.color)
-            if (objIndex !== -1) {
-                storage[objIndex].quantity = Number(inputQuantity[i].value)
-            }
-            localStorage.setItem("products",JSON.stringify(storage));
-            location.reload()
+    console.log(inputQuantity.value);
+    storage.forEach((product, i) => {
+    inputQuantity[i].addEventListener("change",() => {
+        const objIndex = storage.findIndex(item=> item.id === product.id && item.color === product.color)
+        if (objIndex !== -1) {
+            storage[objIndex].quantity = Number(inputQuantity[i].value)
+        }
+        localStorage.setItem("products",JSON.stringify(storage));
+        location.reload()
         })
     })
 }
@@ -196,7 +197,7 @@ function validateForm() {
         }
     })
 }
-// gestion fetch Post
+// gestion envoi au backend
 function addServer(contact, products) {
     fetch("http://localhost:3000/api/products/order", {
       method: "POST",
@@ -204,15 +205,19 @@ function addServer(contact, products) {
         "Accept": "application/json",
         "Content-type": "application/json",
       },
-        body: JSON.stringify(contact, products)
+        body: JSON.stringify({contact, products })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.ok) {
+            return response.json()
+        }
+    })
     .then(data => {
-        const orderId = document.getElementById("orderId")
+        // const orderId = document.getElementById("orderId")
         localStorage.setItem("orderId", data.orderId)
-        orderId.innerText = localStorage.getItem("orderId")
+        // orderId.innerText = localStorage.getItem("orderId")
         window.location.href = "./confirmation.html?orderId=" + confirm.orderId;
-        // localStorage.clear();
+        localStorage.clear();
     })
     .catch((err) => {
         console.log(contact);
