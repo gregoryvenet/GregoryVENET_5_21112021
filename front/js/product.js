@@ -49,7 +49,7 @@ function addProductEvent(product) {
     //Condition a remplir et ajout localStorage
     if (quantity > 0 && quantity <=100 && color !== "") {
       // Transforme json du LocalStorage en objet;
-      const storage = JSON.parse(localStorage.getItem("products"))
+      let storage = JSON.parse(localStorage.getItem("products"))
       // Ajout produit si localStorage existant ou non
       if (storage !== null) {
         const findElement = storage.find(element => element.id === item.id && element.color === item.color)

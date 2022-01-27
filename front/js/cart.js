@@ -7,7 +7,7 @@
     totalQuantity()
     price(product)
     totalPrice()
-    SaveForm()
+    postForm()
 })()
 // recup des produits avec l'API
 function getProducts() {
@@ -15,7 +15,6 @@ function getProducts() {
         .then(res => res.json())
         .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
-
 // Récup élements produits du localStorage
 function getStorageProduct() {
     return JSON.parse(localStorage.getItem("products"))
@@ -28,8 +27,8 @@ function displayCart() {
         document.querySelector(".cart__price").innerHTML = ""
     } else {
         const displayProduct = document.getElementById("cart__items")
-        getStorageProduct().find(element => {
-            displayProduct.innerHTML += `
+        getStorageProduct().forEach(element => {
+            displayProduct.innerHTML+= `
             <article class="cart__item" data-id="${element.id}" data-color="${element.color}">
                 <div class="cart__item__img">
                 <img src="${element.imgSrc}" alt="${element.altTxt}">
@@ -121,33 +120,98 @@ function totalPrice() {
     });
 }
 // Recup bouton "Commander!" et envoi dans le localStorage des valeurs remplies du formulaire
-function SaveForm() {
-    const btnCommand = document.getElementById("order");
-    btnCommand.addEventListener("click", (e) => {
-        e.preventDefault()
-        let formValue = {
-            firstName: document.getElementById("firstName").value,
-            lastName: document.getElementById("lastName").value,
-            address: document.getElementById("address").value,
-            city: document.getElementById("city").value,
-            email: document.getElementById("email").value
+function postForm() {
+    // get valeurs input DOM
+    const firstName = document.getElementById("firstName")
+    const lastName = document.getElementById("lastName")
+    const address = document.getElementById("address")
+    const city = document.getElementById("city")
+    const email = document.getElementById("email")
+    // get messages erreur
+    const firstNameErrorMsg = document.getElementById("firstNameErrorMsg")
+    const lastNameErrorMsg = document.getElementById("lastNameErrorMsg")
+    const addressErrorMsg = document.getElementById("addressErrorMsg")
+    const cityErrorMsg = document.getElementById("cityErrorMsg")
+    const emailErrorMsg = document.getElementById("emailErrorMsg")
+    // création regex
+    const regexFirstLastName = /^[A-Za-z\é\è\ê\-]{3,20}$/
+    const regexaddress = /^[A-Za-z0-9\é\è\ê\-\s\ \.\,]{5,100}$/
+    const regexCity = /^[A-Za-z\é\è\ê\ \,\-]{2,20}$/
+    const regexEmail = /^[A-Za-z0-9\-\.]+@([A-Za-z0-9\-]+\.)+[A-Za-z0-9-]{2,4}$/
+    // condition validation regex input et affichage erreur
+    firstName.addEventListener("input",()=>{
+        if (regexFirstLastName.test(firstName.value)) {
+            firstNameErrorMsg.innerText = ""
+        }else{
+            firstNameErrorMsg.innerText = "Le prénom doit contenir entre 3 et 20 lettres et un tiret au besoin"
         }
-        localStorage.setItem("form", JSON.stringify(formValue))
     })
-
-}
-// Gestion validation du formulaire
-function validateForm() {
-    // recup messages erreur
-    const firstNameErrorMsg = document.getProductId("firstNameErrorMsg")
-    const lastNameErrorMsg = document.getProductId("lastNameErrorMsg")
-    const addressErrorMsg = document.getProductId("addressErrorMsg")
-    const cityErrorMsg = document.getProductId("cityErrorMsg")
-    const emailErrorMsg = document.getProductId("emailErrorMsg")
-    // regex
-    const regexFirstNameErrorMsg = new RegExp(/^[a-zA-Z\s'.-]+$/)
-    const regexaddressErrorMsg = new RegExp(/^[A-Za-z0-9'\.\-\s\,]+$/)
-    const regexEmailErrorMsg = new RegExp(
-        /^((\w[^\W]+)[\.\-]?){1,}\@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      )
+    lastName.addEventListener("input",()=>{
+        if (regexFirstLastName.test(lastName.value)) {
+            lastNameErrorMsg.innerText = ""
+        }else{
+            lastNameErrorMsg.innerText = "Le nom doit contenir entre 3 et 20 lettres et un tiret au besoin"
+        }
+    })
+    address.addEventListener("input",()=>{
+        if (regexaddress.test(address.value)) {
+            addressErrorMsg.innerText = ""
+        }else{
+            addressErrorMsg.innerText = "L'adresse doit contenir entre 5 et 100 caractères et ne doit pas avoir de caractères spéciaux"
+        }
+    })
+    city.addEventListener("input",()=>{
+        if (regexCity.test(city.value)) {
+            cityErrorMsg.innerText = ""
+        }else{
+            cityErrorMsg.innerText = "La ville doit contenir entre 2 et 20 lettres uniquement"
+        }
+    })
+    email.addEventListener("input",()=>{
+        if (regexEmail.test(email.value)) {
+            emailErrorMsg.innerText = ""
+        }else{
+            emailErrorMsg.innerText = "Veuillez respecter la convention (Exemple : kanap.kanap@kanap.com)"
+        }
+    })
+    // Gestion envoie commande
+    const btnCommand = document.getElementById("order")
+    btnCommand.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (regexFirstLastName.test(firstName.value) == true && regexFirstLastName.test(lastName.value) == true && regexaddress.test(address.value) == true && regexCity.test(city.value) == true && regexEmail.test(email.value) == true) {
+            let products = []
+            getStorageProduct().forEach(order => {
+                products.push(order.id)
+            })
+            const order = {
+                contact : {
+                    firstName : firstName.value,
+                    lastName : lastName.value,
+                    address : address.value,
+                    city : city.value,
+                    email : email.value
+                },
+                products,
+            }
+            fetch("http://localhost:3000/api/products/order", {
+            	method: "POST",
+                headers: { 
+            'Accept': 'application/json', 
+            'Content-Type': 'application/json' 
+            },
+                body: JSON.stringify(order)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const orderId = document.getElementById("orderId");
+                localStorage.setItem("orderId", data.orderId)
+                orderId.innerText = localStorage.getItem("orderId");
+                window.location.href ="./confirmation.html?orderId=${data.orderId}"
+                // localStorage.clear();
+            })
+            .catch((err) => {
+                alert ("Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" + err.message);
+            })
+        }
+    })
 }
