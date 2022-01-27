@@ -7,7 +7,7 @@
     totalQuantity()
     price(product)
     totalPrice()
-    postForm()
+    validateForm()
 })()
 // recup des produits avec l'API
 function getProducts() {
@@ -28,7 +28,7 @@ function displayCart() {
     } else {
         const displayProduct = document.getElementById("cart__items")
         getStorageProduct().forEach(element => {
-            displayProduct.innerHTML+= `
+            displayProduct.innerHTML += `
             <article class="cart__item" data-id="${element.id}" data-color="${element.color}">
                 <div class="cart__item__img">
                 <img src="${element.imgSrc}" alt="${element.altTxt}">
@@ -71,7 +71,7 @@ function updateQuantityEvent() {
         inputQuantity[i].addEventListener("change",() => {
             const objIndex = storage.findIndex(item=> item.id === product.id && item.color === product.color)
             if (objIndex !== -1) {
-                storage[objIndex].quantity = inputQuantity[i].value
+                storage[objIndex].quantity = Number(inputQuantity[i].value)
             }
             localStorage.setItem("products",JSON.stringify(storage));
             location.reload()
@@ -120,7 +120,7 @@ function totalPrice() {
     });
 }
 // Recup bouton "Commander!" et envoi dans le localStorage des valeurs remplies du formulaire
-function postForm() {
+function validateForm() {
     // get valeurs input DOM
     const firstName = document.getElementById("firstName")
     const lastName = document.getElementById("lastName")
@@ -177,41 +177,46 @@ function postForm() {
     // Gestion envoie commande
     const btnCommand = document.getElementById("order")
     btnCommand.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (regexFirstLastName.test(firstName.value) == true && regexFirstLastName.test(lastName.value) == true && regexaddress.test(address.value) == true && regexCity.test(city.value) == true && regexEmail.test(email.value) == true) {
+        if (regexFirstLastName.test(firstName.value) === true && regexFirstLastName.test(lastName.value) === true && regexaddress.test(address.value) === true && regexCity.test(city.value) === true && regexEmail.test(email.value) === true) {
             let products = []
             getStorageProduct().forEach(order => {
                 products.push(order.id)
             })
-            const order = {
-                contact : {
+            const contact = {
                     firstName : firstName.value,
                     lastName : lastName.value,
                     address : address.value,
                     city : city.value,
                     email : email.value
-                },
-                products,
-            }
-            fetch("http://localhost:3000/api/products/order", {
-            	method: "POST",
-                headers: { 
-            'Accept': 'application/json', 
-            'Content-Type': 'application/json' 
-            },
-                body: JSON.stringify(order)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const orderId = document.getElementById("orderId");
-                localStorage.setItem("orderId", data.orderId)
-                orderId.innerText = localStorage.getItem("orderId");
-                window.location.href ="./confirmation.html?orderId=${data.orderId}"
-                // localStorage.clear();
-            })
-            .catch((err) => {
-                alert ("Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" + err.message);
-            })
+                }
+            addServer(contact, products)
+        }else{
+            e.preventDefault();
+            alert("Veuillez vérifier le formulaire.")
         }
+    })
+}
+// gestion fetch Post
+function addServer(contact, products) {
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+      },
+        body: JSON.stringify(contact, products)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const orderId = document.getElementById("orderId")
+        localStorage.setItem("orderId", data.orderId)
+        orderId.innerText = localStorage.getItem("orderId")
+        window.location.href = "./confirmation.html?orderId=" + confirm.orderId;
+        // localStorage.clear();
+    })
+    .catch((err) => {
+        console.log(contact);
+        console.log(products);
+        alert ("Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" + err.message);
     })
 }

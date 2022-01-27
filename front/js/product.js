@@ -2,9 +2,9 @@
 (async function() {
   const productId = getProductId()
   const product = await getProduct(productId)
-    displayProduct(product)
-    addProductEvent(product)
-    addTitlePage(product)
+  displayProduct(product)
+  addProductEvent(product)
+  addTitlePage(product)
 })()
 // Ajout nom du produit dans le titre de la page
 function addTitlePage(product) {
@@ -13,74 +13,71 @@ function addTitlePage(product) {
 //------------------------GESTION DU PRODUIT SUR LE DOM------------------------
 // Récup de l'ID du produit du lien du navigateur
 function getProductId() {
-    return new URL(location.href).searchParams.get("id")
+  return new URL(location.href).searchParams.get("id")
 }
 // recup des produits avec l'API
 function getProduct(productId) {
-    return fetch("http://localhost:3000/api/products/" + productId) 
-        .then(res => res.json())
-        .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
+  return fetch("http://localhost:3000/api/products/" + productId) 
+    .then(res => res.json())
+    .catch(error => alert("Problème de chargement des produits.\n Veuillez nous excuser du désagrément.\n Nous mettons tout en oeuvre pour régler le problème."))
 }
 // Affichage des éléments sur le DOM
 function displayProduct(product) {
-    document.querySelector(".item__img").innerHTML = `<img id="imgTxt" src="${product.imageUrl}" alt="${product.altTxt}"></img>`
-    document.getElementById("title").textContent = product.name
-    document.getElementById("price").textContent = product.price
-    document.getElementById("description").textContent = product.description
-    product.colors.forEach((color) =>{
-      document.getElementById("colors").innerHTML += `<option value="${color}">${color}</option>`
-    })
+  document.querySelector(".item__img").innerHTML = `<img id="imgTxt" src="${product.imageUrl}" alt="${product.altTxt}"></img>`
+  document.getElementById("title").textContent = product.name
+  document.getElementById("price").textContent = product.price
+  document.getElementById("description").textContent = product.description
+  product.colors.forEach((color) =>{
+    document.getElementById("colors").innerHTML += `<option value="${color}">${color}</option>`
+  })
 }
 //------------------------GESTION AVANT PANIER------------------------
+// Ecoute du bouton et recup des éléments du DOM
 function addProductEvent(product) {
-  // Ecoute du bouton et recup des éléments du DOM
   document.getElementById("addToCart").addEventListener("click", () => {
-    const color = document.getElementById("colors").value;
-    const quantity = document.getElementById("quantity").value;
-    //Création de l'objet avant envoi au localStorage
-    const item = {
-      id: product._id,
-      name: product.name,
-      altTxt: product.altTxt,
-      imgSrc: product.imageUrl,
-      color,
-      quantity,
-    };
-    //Condition a remplir et ajout localStorage
-    if (quantity > 0 && quantity <=100 && color !== "") {
-      // Transforme json du LocalStorage en objet;
-      let storage = JSON.parse(localStorage.getItem("products"))
-      // Ajout produit si localStorage existant ou non
-      if (storage !== null) {
-        const findElement = storage.find(element => element.id === item.id && element.color === item.color)
-        // si l'element est trouvé dans le localStorage ou  non
-        if (findElement != undefined) {
-          const elQuantity = parseInt(findElement.quantity)
-          const quantity = parseInt(item.quantity)
-          findElement.quantity = elQuantity + quantity
-          localStorage.setItem("products", JSON.stringify(storage))
-        } else {
-          storage.push(item)
-          localStorage.setItem("products", JSON.stringify(storage))
-        }
-        // appel fonction popup de validation
-        popupValidate()
+    addProduct(product)
+  })
+}
+// condition d'ajout au localstorage
+function addProduct(product) {
+  const color = document.getElementById("colors").value;
+  const quantity = Number(document.getElementById("quantity").value);
+  let cart = JSON.parse(localStorage.getItem("products"))
+  //Création de l'objet avant envoi au localStorage
+  const item = {
+    id: product._id,
+    name: product.name,
+    altTxt: product.altTxt,
+    imgSrc: product.imageUrl,
+    color,
+    quantity,
+  };
+  //Condition a remplir et ajout localStorage
+  if (quantity > 0 && quantity <=100 && color !== "") {    
+    // Ajout produit si localStorage existant ou non
+    if (cart !== null) {
+      const productFund = cart.find(element => element.id === item.id && element.color === item.color)
+      // si l'element est trouvé dans le localStorage ou  non
+      if (productFund != undefined) {
+        productFund.quantity += quantity
       } else {
-        storage = []
-        storage.push(item)
-        localStorage.setItem("products", JSON.stringify(storage))
-        popupValidate();
+        cart.push(item)
       }
     } else {
-      alert("Merci de choisir une quantité compris entre 1 et 100 ainsi qu'une couleur s'il vous plait!");
+      cart = []
+      cart.push(item)
     }
-    // Popup choix après ajout au panier
-    function popupValidate() {
-      if (window.confirm(`${quantity} ${product.name} ont été ajouté à votre panier.\nCliquez sur OK pour continuer vos achats ou ANNULER pour aller au panier`)) {
-        window.location.href = "index.html"
-        } else {
-        window.location.href = "cart.html"
-        }
-      }
-  });
+    localStorage.setItem("products", JSON.stringify(cart))
+    popupValidate(product.name, quantity)
+  }else {
+    alert("Veuillez choisir une quantité entre 1 et 100 et une couleur.")
+}
+// Popup choix après ajout au panier
+function popupValidate(name, quantity) {
+  if (window.confirm(`${quantity} ${name} ont été ajouté à votre panier.\nCliquez sur OK pour continuer vos achats ou ANNULER pour aller au panier`)) {
+    window.location.href = "index.html"
+    } else {
+    window.location.href = "cart.html"
+    }
+  }
 }
