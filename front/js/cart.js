@@ -225,3 +225,4 @@ function addServer(contact, products) {
         alert ("Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" + err.message);
     })
 }
+
