@@ -1,6 +1,6 @@
 # Projet 5 de la formation Dev web Openclassrooms
 
-Projet en cours de construction
+Projet terminé en attente de validation
 
 ### Back end Prerequisites
 You will need to have Node and npm installed locally on your machine.
