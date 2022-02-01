@@ -1,6 +1,6 @@
 # Projet 5 de la formation Dev web Openclassrooms
 
-Projet en cours de construction
+Projet terminé en attente de validation
 
 ### Back end Prerequisites
 You will need to have Node and npm installed locally on your machine.
@@ -18,7 +18,7 @@ Votre client est Kanap, une marque de canapés qui vend ses produits depuis sa b
 </p>
 <p align="center">Logo de Kanap</p>
 
- 
+
 
 Dans le cadre de cette mission, vous travaillez avec une équipe constituée de :
 
@@ -30,17 +30,17 @@ Corinne vous envoie un e-mail pour vous briefer sur la mission :
 
 > De : Corinne
 > À : Vous
-> Objet : Site e-commerce Kanap 
+> Objet : Site e-commerce Kanap
 >
 > Hello !
 >
-> Comme on en a discuté hier, voici les informations pour que tu puisses démarrer > l’implémentation du site de Kanap de manière dynamique. 
+> Comme on en a discuté hier, voici les informations pour que tu puisses démarrer > l’implémentation du site de Kanap de manière dynamique.
 >
 > Voici les différentes tâches que tu vas devoir mener à bien :
 >
 > Unifier les travaux déjà réalisés par l’équipe en intégrant dynamiquement les > > éléments de l’API dans les différentes pages web avec JavaScript. Le code du > front-end et de l’API est disponible sur ce [repo](https://github.com/OpenClassrooms-Student-Center/P5-Dev-Web-Kanap).
 > Mettre en place un plan de test d’acceptation à partir de ce [template](https://s3.eu-west-1.amazonaws.com/course.oc-static.com/projects/DWJ_FR_P5/DW+P5+-+Modele+plan+tests+acceptation.xlsx) que nous > avons pour habitude d’utiliser.
-> Pour plus de précisions, voici les [spécifications techniques et fonctionnelles](https://s3.eu-west-1.amazonaws.com/course.oc-static.com/projects/DWJ_FR_P5/DW+P5+-+Specifications+fonctionnelles.pdf) > du projet. Tu pourras y trouver tous les détails de celui-ci, les attentes pour > chaque page du site web et les détails de l’API. 
+> Pour plus de précisions, voici les [spécifications techniques et fonctionnelles](https://s3.eu-west-1.amazonaws.com/course.oc-static.com/projects/DWJ_FR_P5/DW+P5+-+Specifications+fonctionnelles.pdf) > du projet. Tu pourras y trouver tous les détails de celui-ci, les attentes pour > chaque page du site web et les détails de l’API.
 >
 > N'hésite pas à venir me voir si tu as la moindre question, ma porte est toujours > ouverte.
 >
@@ -53,7 +53,7 @@ Un peu plus tard, Frank vous envoie un e-mail pour vous apporter quelques préci
 
 > De : Frank
 > À : Vous
-> Objet Maquettes statiques du site de Kanap 
+> Objet Maquettes statiques du site de Kanap
 >
 > Salut,
 >
