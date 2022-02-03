@@ -1,9 +1,13 @@
 // Auto appel des fonctions
 (async function () {
-	const product = await getProducts();
+	const products = await getProducts();
 	displayCart();
-	price(product);
-	totalPrice();
+	updateQuantityEvent();
+	removeElementEvent();
+	totalQuantity();
+	validateForm();
+	price(products);
+	totalPrice()
 })();
 // recup des produits avec l'API
 function getProducts() {
@@ -51,19 +55,15 @@ function displayCart() {
                 </div>
             </article>`;
 		});
-		updateQuantityEvent();
-		removeElementEvent();
-		totalQuantity();
-		validateForm();
 	}
 }
 // Ajout Prix de l'API avec calcul individuel par quantité
-function price(product) {
+function price(products) {
 	const priceProduct = document.querySelectorAll("#priceProduct");
 	const inputQuantity = document.querySelectorAll(".itemQuantity");
 	priceProduct.forEach((item, i) => {
 		const id = item.closest(".cart__item").dataset.id;
-		const find = product.find((element) => element._id == id);
+		const find = products.find(element => element._id == id);
 		item.innerText = find.price * inputQuantity[i].value + " €";
 	});
 }
@@ -85,7 +85,9 @@ function updateQuantityEvent() {
 			}
 			localStorage.setItem("products", JSON.stringify(storage));
 			location.reload();
+			validateForm();
 		});
+
 	});
 }
 // Fonction suppression du produit dans le panier
@@ -120,7 +122,7 @@ function totalQuantity() {
 	quantityProduct.forEach((quantity) => {
 		totalNumber += parseInt(quantity.value);
 	});
-	return (totalQuantity.innerText = totalNumber);
+	totalQuantity.innerText = totalNumber;
 }
 // Calcul du prix total
 function totalPrice() {
@@ -205,8 +207,9 @@ function validateForm() {
 			regexEmail.test(email.value)
 		) {
 			let productOrder = [];
-			productStorage().forEach((order) => {
+			productStorage().forEach(order => {
 				productOrder.push(order.id);
+
 			});
 			const order = {
 				contact: {
@@ -218,6 +221,7 @@ function validateForm() {
 				},
 				products: productOrder,
 			};
+			console.log(order);
 			addServer(order);
 		} else {
 			e.preventDefault();
@@ -234,16 +238,16 @@ function addServer(order) {
 		},
 		body: JSON.stringify(order),
 	})
-		.then((response) => response.json())
-		.then((response) => {
-			localStorage.clear();
-			window.location.href = "./confirmation.html?orderId=" + response.orderId;
-			console.log( response );
-		})
-		.catch((error) => {
-			alert(
-				"Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" +
-					error.message,
-			);
-		});
+	.then((response) => response.json())
+	.then((response) => {
+		localStorage.clear();
+		window.location.href = "./confirmation.html?orderId=" + response.orderId;
+		console.log( response );
+	})
+	.catch((error) => {
+		alert(
+			"Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" +
+				error.message,
+		);
+	});
 }
