@@ -2,8 +2,8 @@
 (async function () {
 	const products = await getProducts();
 	displayCart();
-	price(products)
-	totalPrice()
+	price(products);
+	totalPrice();
 })();
 // recup des produits avec l'API
 function getProducts() {
@@ -54,7 +54,6 @@ function displayCart() {
 		totalQuantity();
 		removeElementEvent();
 		updateQuantityEvent();
-
 		validateForm();
 	}
 }
@@ -238,15 +237,15 @@ function addServer(order) {
 		},
 		body: JSON.stringify(order),
 	})
-	.then((response) => response.json())
-	.then((response) => {
-		localStorage.clear();
-		window.location.href = "./confirmation.html?orderId=" + response.orderId;
-	})
-	.catch((error) => {
-		alert(
-			"Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" +
+		.then((response) => response.json())
+		.then((response) => {
+			localStorage.clear();
+			window.location.href = "./confirmation.html?orderId=" + response.orderId;
+		})
+		.catch((error) => {
+			alert(
+				"Problème de chargement des produits.\nVeuillez nous excuser du désagrément.\nNous mettons tout en oeuvre pour régler le problème.\n" +
 				error.message,
-		);
-	});
+			);
+		});
 }
