@@ -2,11 +2,7 @@
 (async function () {
 	const products = await getProducts();
 	displayCart();
-	updateQuantityEvent();
-	removeElementEvent();
-	totalQuantity();
-	validateForm();
-	price(products);
+	price(products)
 	totalPrice()
 })();
 // recup des produits avec l'API
@@ -55,6 +51,11 @@ function displayCart() {
                 </div>
             </article>`;
 		});
+		totalQuantity();
+		removeElementEvent();
+		updateQuantityEvent();
+
+		validateForm();
 	}
 }
 // Ajout Prix de l'API avec calcul individuel par quantité
@@ -151,7 +152,7 @@ function validateForm() {
 	const emailErrorMsg = document.getElementById("emailErrorMsg");
 	// création regex
 	const regexFirstLastName = /^[A-Za-z\é\è\ê\-]{3,20}$/;
-	const regexaddress = /^[A-Za-z0-9\é\è\ê\-\s\ \.\,]{5,100}$/;
+	const regexaddress = /^[A-Za-z0-9\é\è\ê\-\s\.\,]{5,100}$/;
 	const regexCity = /^[A-Za-z\é\è\ê\ \,\-]{2,20}$/;
 	const regexEmail = /^[A-Za-z0-9\-\.\_]+@([A-Za-z]+\.)+[A-Za-z]{2,4}$/;
 	// condition validation regex input et affichage erreur
@@ -221,7 +222,6 @@ function validateForm() {
 				},
 				products: productOrder,
 			};
-			console.log(order);
 			addServer(order);
 		} else {
 			e.preventDefault();
@@ -242,7 +242,6 @@ function addServer(order) {
 	.then((response) => {
 		localStorage.clear();
 		window.location.href = "./confirmation.html?orderId=" + response.orderId;
-		console.log( response );
 	})
 	.catch((error) => {
 		alert(

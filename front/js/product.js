@@ -13,7 +13,6 @@ function addTitlePage(product) {
 //------------------------GESTION DU PRODUIT SUR LE DOM------------------------
 // Récup de l'ID du produit du lien du navigateur
 function getProductId() {
-
 	return new URL(location.href).searchParams.get("id");
 }
 // recup des produits avec l'API
@@ -85,14 +84,14 @@ function addProduct(product) {
 	}
 }
 // Popup choix après ajout au panier
-	function popupValidate(name, quantity, color) {
-		if (
-			window.confirm(
-				`${quantity} ${name} de couleur ${color} ont été ajoutés à votre panier.\nCliquez sur OK pour continuer vos achats ou ANNULER pour aller au panier`,
-			)
-		) {
-			window.location.href = "index.html";
-		} else {
-			window.location.href = "cart.html";
-		}
+function popupValidate(name, quantity, color) {
+	if (
+		window.confirm(
+			`${quantity} ${name} de couleur ${color} ont été ajoutés à votre panier.\nCliquez sur OK pour continuer vos achats ou ANNULER pour aller au panier`,
+		)
+	) {
+		window.location.href = "index.html";
+	} else {
+		window.location.href = "cart.html";
 	}
+}
